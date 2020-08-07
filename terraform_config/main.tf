@@ -4,12 +4,24 @@ provider "aws" {
   version = "3.0.0"
 }
 
+resource "aws_key_pair" "work2" {
+  key_name   = "work2"
+  public_key = file("work2.pem")
+}
+
 resource "aws_instance" "My_Reddit1" {
   ami                    = "ami-0d359437d1756caa8"
   instance_type          = "t2.micro"
   key_name               = "work2"
   vpc_security_group_ids = [aws_security_group.reddit.id]
   user_data              = file("user_data.sh")
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file("work2.pem")
+    host        = self.public_ip
+  }
 
 }
 
